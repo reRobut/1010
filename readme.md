@@ -24,7 +24,7 @@ const ColorPalette = [
     "#D62828", // 3: 赤
     "#003049", // 4: 黑
 ];
-
+```
 - France
 ```
 const ColorPalette = [
