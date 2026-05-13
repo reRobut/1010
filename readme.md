@@ -16,9 +16,7 @@ const ColorPalette = [
 方块形状：
 1x1
 2x2
-        - const block = [
-  [1, 1],
-  [1, 1]];
+    - const block = [[1, 1],[1, 1]];
 3x3
         - const block = [
   [0, 1, 1],
