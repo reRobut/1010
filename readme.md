@@ -21,7 +21,7 @@ const SHAPE_CONFIG = [
     {
         name: "dot",
         matrix: [[1]],
-        weight: 100,      // 极易出现，用于救急
+        weight: 10,     
         canRotate: false,
         canMirror: false
     },
@@ -41,7 +41,7 @@ const SHAPE_CONFIG = [
             [0, 0, 1, 0, 0],
             [0, 0, 1, 0, 0]
         ],
-        weight: 5,        // 难度极高，极低概率出
+        weight: 5,        
         canRotate: false,
         canMirror: false
     },
@@ -90,42 +90,42 @@ const SHAPE_CONFIG = [
             [0, 1, 0],
             [0, 1, 1]
         ],
-        weight: 15,       // 形状复杂，权重设低
+        weight: 10,      
         canRotate: true,
         canMirror: true
     },
     {
         name: "line2",
         matrix: [[1, 1]],
-        weight: 80,
+        weight: 50,
         canRotate: true,
-        canMirror: false  // 线条镜像没意义
+        canMirror: false  
     },
     {
         name: "line3",
         matrix: [[1, 1, 1]],
-        weight: 60,
+        weight: 45,
         canRotate: true,
         canMirror: false
     },
     {
         name: "line4",
         matrix: [[1, 1, 1, 1]],
-        weight: 40,
+        weight: 15,
         canRotate: true,
         canMirror: false
     },
     {
         name: "line5",
         matrix: [[1, 1, 1, 1, 1]],
-        weight: 20,       // 5连长条占地大，设低
+        weight: 10,       // 5连长条占地大，设低
         canRotate: true,
         canMirror: false
     },
     {
         name: "stair",
         matrix: [[0, 1, 1], [1, 1, 0], [1, 0, 0]],
-        weight: 35,
+        weight: 25,
         canRotate: true,
         canMirror: true
     }
