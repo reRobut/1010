@@ -15,6 +15,7 @@ const ColorPalette = [
     "#A9DEF9", // 3: 蓝
     "#E4C1F9", // 4: 紫
 ];
+```
 - Germany
 ```
 const ColorPalette = [
