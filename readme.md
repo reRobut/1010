@@ -16,74 +16,140 @@ const ColorPalette = [
 棋盘大小：10x10
 方块形状：
 ```
-const SHAPE_LIBRARY_static = {
-"dot": [
-        [1]
-    ],
-"22full": [
-        [1, 1],
-        [1, 1]
-    ],
- "5CROSS": [
-        [0, 0, 1, 0, 0],
-        [0, 0, 1, 0, 0],
-        [1, 1, 0, 1, 1],
-        [0, 0, 1, 0, 0],
-        [0, 0, 1, 0, 0]
-    ]
-};
-const SHAPE_LIBRARY = {
-"23L": [
-        [1, 0],
-        [1, 0],
-        [1, 1]
-    ],
-"six": [
-        [1, 0],
-        [1, 1],
-        [1, 1]
-    ],
-"3dots": [
-        [1, 0],
-        [1, 1]
-    ],
-    "23Z": [
-        [0, 1, 1],
-        [1, 1, 0]
-    ],
- "24Z": [
-          [0, 1],
-          [1, 1],
-          [1, 0],
-          [1, 0]
-    ],
-"34Z": [
+const SHAPE_CONFIG = [
+    // --- 静态组 (SHAPE_LIBRARY_static) ---
+    {
+        name: "dot",
+        matrix: [[1]],
+        weight: 100,      // 极易出现，用于救急
+        canRotate: false,
+        canMirror: false
+    },
+    {
+        name: "22full",
+        matrix: [[1, 1], [1, 1]],
+        weight: 60,
+        canRotate: false,
+        canMirror: false
+    },
+    {
+        name: "5CROSS",
+        matrix: [
+            [0, 0, 1, 0, 0],
+            [0, 0, 1, 0, 0],
+            [1, 1, 0, 1, 1],
+            [0, 0, 1, 0, 0],
+            [0, 0, 1, 0, 0]
+        ],
+        weight: 5,        // 难度极高，极低概率出
+        canRotate: false,
+        canMirror: false
+    },
+
+    // --- 动态变换组 (SHAPE_LIBRARY) ---
+    {
+        name: "23L",
+        matrix: [[1, 0], [1, 0], [1, 1]],
+        weight: 50,
+        canRotate: true,
+        canMirror: true
+    },
+    {
+        name: "six",
+        matrix: [[1, 0], [1, 1], [1, 1]],
+        weight: 40,
+        canRotate: true,
+        canMirror: true
+    },
+    {
+        name: "3dots",
+        matrix: [[1, 0], [1, 1]],
+        weight: 70,
+        canRotate: true,
+        canMirror: true
+    },
+    {
+        name: "23Z",
+        matrix: [[0, 1, 1], [1, 1, 0]],
+        weight: 45,
+        canRotate: true,
+        canMirror: true
+    },
+    {
+        name: "24Z",
+        matrix: [[0, 1], [1, 1], [1, 0], [1, 0]],
+        weight: 30,
+        canRotate: true,
+        canMirror: true
+    },
+    {
+        name: "34Z",
+        matrix: [
             [1, 1, 0],
             [0, 1, 0],
             [0, 1, 0],
             [0, 1, 1]
-    ],
-   "line2": [
-        [1, 1]
-    ],
-"line3": [
-        [1, 1, 1]
-    ],
-"line4": [
-        [1, 1, 1, 1]
-    ],
-"line5": [
-        [1, 1, 1, 1, 1]
-    ],
-"stair": [
-         [0, 1, 1],
-         [1, 1, 0],
-         [1, 0, 0]
-    ],
-};
+        ],
+        weight: 15,       // 形状复杂，权重设低
+        canRotate: true,
+        canMirror: true
+    },
+    {
+        name: "line2",
+        matrix: [[1, 1]],
+        weight: 80,
+        canRotate: true,
+        canMirror: false  // 线条镜像没意义
+    },
+    {
+        name: "line3",
+        matrix: [[1, 1, 1]],
+        weight: 60,
+        canRotate: true,
+        canMirror: false
+    },
+    {
+        name: "line4",
+        matrix: [[1, 1, 1, 1]],
+        weight: 40,
+        canRotate: true,
+        canMirror: false
+    },
+    {
+        name: "line5",
+        matrix: [[1, 1, 1, 1, 1]],
+        weight: 20,       // 5连长条占地大，设低
+        canRotate: true,
+        canMirror: false
+    },
+    {
+        name: "stair",
+        matrix: [[0, 1, 1], [1, 1, 0], [1, 0, 0]],
+        weight: 35,
+        canRotate: true,
+        canMirror: true
+    }
+];
 ```
+当游戏需要生成三个新方块时，你的逻辑应该是：
 
+- 随机选型： 从 SHAPE_LIBRARY 里随机挑一个。
 
+- 随机变换： 随机运行 0-3 次 rotateMatrix，或者随机决定是否 mirrorMatrix。
+
+- 上色： 遍历最终生成的矩阵，把 1 变成随机的 ColorID。
+```
+function rotateMatrix(matrix) {
+    // 将行变为列
+    return matrix[0].map((_, index) => 
+        matrix.map(row => row[index]).reverse()
+    );
+}
+
+function mirrorMatrix(matrix) {
+    return matrix.map(row => [...row].reverse());
+}
+```
 - 提示
 - 10元购买去广告
 - 排行榜
