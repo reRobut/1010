@@ -1,3 +1,8 @@
+好用网站：
+图标：https://igoutu.cn/icons
+音效：https://www.sucai999.com/search/audio
+
+
 1. 调色盘（Color Palette）,背景色的微调：原版四色（橙绿蓝黄）
 2. 形状与细节的微调：
     - 圆角弧度： 原版如果是 4px 圆角，你可以尝试大圆角（更像豆腐，更Q弹）或者超小圆角（更硬朗，更极客）
