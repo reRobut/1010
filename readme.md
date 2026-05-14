@@ -84,6 +84,12 @@ const SHAPE_CONFIG = [
         weight: 40,
         canRotate: true,
         canMirror: true
+    }, {
+        name: "pu",
+        matrix: [[1, 0], [1, 1], [1, 0]],
+        weight: 40,
+        canRotate: true,
+        canMirror: true
     },
     {
         name: "3dots",
