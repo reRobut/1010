@@ -69,6 +69,13 @@ const SHAPE_CONFIG = [
         canRotate: false,
         canMirror: false
     },
+    {
+        name: "kou",
+        matrix: [[1, 1, 1], [1, 0, 1], [1, 1, 1]],
+        weight: 25,
+        canRotate: false,
+        canMirror: false
+    }
 
     // --- 动态变换组 (SHAPE_LIBRARY) ---
     {
