@@ -86,6 +86,13 @@ const SHAPE_CONFIG = [
         canMirror: true
     },
     {
+        name: "longPu",
+        matrix: [[0, 1, 0], [0, 1, 0], [1, 1, 1]],
+        weight: 25,
+        canRotate: false,
+        canMirror: false
+    },
+    {
         name: "six",
         matrix: [[1, 0], [1, 1], [1, 1]],
         weight: 40,
