@@ -358,6 +358,12 @@
 			<div id="hint">拖拽形状到棋盘 · 相同颜色相邻3块消除得分</div>
 		</div>
 
+		<!-- Audio -->
+		<audio id="snd-place" src="place.mp3" preload="auto"></audio>
+		<audio id="snd-eliminate" src="eliminate.mp3" preload="auto"></audio>
+		<audio id="snd-death" src="death.mp3" preload="auto"></audio>
+		<audio id="snd-restart" src="restart.mp3" preload="auto"></audio>
+
 		<!-- Drag ghost -->
 		<div id="ghost"><canvas id="ghost-canvas"></canvas></div>
 
@@ -372,6 +378,14 @@
 		</div>
 
 		<script>
+			// ─────────────────────── Audio ────────────────────────────
+			function playSound(id) {
+				const el = document.getElementById(id);
+				if (!el) return;
+				el.currentTime = 0;
+				el.play().catch(() => {});
+			}
+
 			// ─────────────────────── Constants ────────────────────────
 			const ROWS = 10,
 				COLS = 10;
@@ -793,6 +807,7 @@
 						placed++;
 					}
 				addScore(placed);
+				playSound("snd-place");
 				checkEliminate();
 			}
 
@@ -802,6 +817,7 @@
 				const toElim = new Set();
 				for (const g of groups) for (const { r, c } of g) toElim.add(`${r},${c}`);
 				addScore(toElim.size * 2);
+				playSound("snd-eliminate");
 				for (const key of toElim) {
 					const [r, c] = key.split(",").map(Number);
 					boardData[r][c] = -1;
@@ -882,6 +898,7 @@
 			}
 
 			function showGameOver() {
+				playSound("snd-death");
 				goScore.textContent = score;
 				goOverlay.classList.add("show");
 			}
@@ -1069,10 +1086,12 @@
 			});
 
 			document.getElementById("restart-btn").addEventListener("click", () => {
+				playSound("snd-restart");
 				cancelDrag();
 				initGame();
 			});
 			document.getElementById("go-restart").addEventListener("click", () => {
+				playSound("snd-restart");
 				cancelDrag();
 				initGame();
 			});
