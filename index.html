@@ -180,6 +180,57 @@
 				display: block;
 			}
 
+			/* ── Rotate Zone ── */
+			#rotate-zone {
+				width: 64px;
+				height: 64px;
+				border-radius: 50%;
+				border: 2px dashed #ffffff30;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				gap: 2px;
+				transition:
+					border-color 0.15s,
+					background 0.15s,
+					transform 0.2s;
+				flex-shrink: 0;
+				cursor: default;
+			}
+			#rotate-zone.drag-over {
+				border-color: var(--accent);
+				background: #00f5d420;
+				transform: scale(1.12);
+			}
+			#rotate-zone.spin #rotate-icon {
+				animation: spin-once 0.25s ease-out;
+			}
+			@keyframes spin-once {
+				from {
+					transform: rotate(0deg);
+				}
+				to {
+					transform: rotate(90deg);
+				}
+			}
+			#rotate-icon {
+				font-size: 26px;
+				line-height: 1;
+				color: var(--text-dim);
+				transition: color 0.15s;
+				display: inline-block;
+			}
+			#rotate-zone.drag-over #rotate-icon {
+				color: var(--accent);
+			}
+			#rotate-label {
+				font-size: 9px;
+				letter-spacing: 1px;
+				color: var(--text-dim);
+				text-transform: uppercase;
+			}
+
 			/* ── Drag Ghost ── */
 			#ghost {
 				position: fixed;
@@ -297,6 +348,10 @@
 
 			<div id="tray">
 				<div class="slot-wrap" id="slot-0"><canvas class="slot-canvas" id="slot-canvas-0"></canvas></div>
+				<div id="rotate-zone">
+					<div id="rotate-icon">↻</div>
+					<div id="rotate-label">旋转</div>
+				</div>
 				<div class="slot-wrap" id="slot-1"><canvas class="slot-canvas" id="slot-canvas-1"></canvas></div>
 			</div>
 
@@ -879,13 +934,48 @@
 				moveDrag(clientX, clientY);
 			}
 
+			const rotateZoneEl = document.getElementById("rotate-zone");
+			let rotateZoneActive = false; // track whether cursor is currently inside zone
+
+			function isOverRotateZone(clientX, clientY) {
+				const rect = rotateZoneEl.getBoundingClientRect();
+				return clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom;
+			}
+
+			function rotateDragPiece() {
+				if (selectedSlot < 0 || !pieces[selectedSlot]) return;
+				pieces[selectedSlot] = rotateMatrix(pieces[selectedSlot]);
+				// redraw ghost
+				drawPieceGhost(pieces[selectedSlot]);
+				// flash spin animation
+				rotateZoneEl.classList.remove("spin");
+				void rotateZoneEl.offsetWidth; // reflow to restart animation
+				rotateZoneEl.classList.add("spin");
+				setTimeout(() => rotateZoneEl.classList.remove("spin"), 300);
+			}
+
 			function moveDrag(clientX, clientY) {
 				if (!dragActive || selectedSlot < 0) return;
 				ghost.style.left = clientX + "px";
 				ghost.style.top = clientY + "px";
-				const cell = getDropCell(clientX, clientY);
-				if (cell) showPreview(pieces[selectedSlot], cell.row, cell.col);
-				else clearPreviewCells();
+
+				// rotate zone hover detection
+				const overZone = isOverRotateZone(clientX, clientY);
+				if (overZone && !rotateZoneActive) {
+					rotateZoneActive = true;
+					rotateZoneEl.classList.add("drag-over");
+					rotateDragPiece();
+					clearPreviewCells();
+				} else if (!overZone && rotateZoneActive) {
+					rotateZoneActive = false;
+					rotateZoneEl.classList.remove("drag-over");
+				}
+
+				if (!overZone) {
+					const cell = getDropCell(clientX, clientY);
+					if (cell) showPreview(pieces[selectedSlot], cell.row, cell.col);
+					else clearPreviewCells();
+				}
 			}
 
 			function endDrag(clientX, clientY) {
@@ -894,13 +984,17 @@
 				if (cell && canPlace(pieces[selectedSlot], cell.row, cell.col)) {
 					clearPreviewCells();
 					placePiece(pieces[selectedSlot], cell.row, cell.col);
-					pieces[selectedSlot] = null;
-					slotEls[selectedSlot].classList.remove("active-drag");
+					const placedSlot = selectedSlot;
+					pieces[placedSlot] = null;
+					slotEls[placedSlot].classList.remove("active-drag");
 					selectedSlot = -1;
 					dragActive = false;
 					ghost.style.display = "none";
-					if (pieces.every((p) => p === null)) dealPieces();
-					else renderSlots();
+					rotateZoneActive = false;
+					rotateZoneEl.classList.remove("drag-over");
+					// immediately refill the used slot
+					pieces[placedSlot] = generatePiece();
+					renderSlots();
 					if (!canAnyPlace()) setTimeout(showGameOver, 300);
 				} else {
 					cancelDrag();
@@ -913,6 +1007,8 @@
 				dragActive = false;
 				ghost.style.display = "none";
 				clearPreviewCells();
+				rotateZoneActive = false;
+				rotateZoneEl.classList.remove("drag-over");
 				renderSlots();
 			}
 
